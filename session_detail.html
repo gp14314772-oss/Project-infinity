@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Session Details - {{ session[1][:8] }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>
+                <i class="fas fa-calendar-alt"></i> Session Details
+            </h1>
+            <a href="{{ url_for('sessions') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Sessions
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-info-circle"></i> Session Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="200">Session ID:</th>
+                        <td><code>{{ session[1] }}</code></td>
+                    </tr>
+                    <tr>
+                        <th>Teacher:</th>
+                        <td>{{ session[-1] }} ({{ session[2] }})</td>
+                    </tr>
+                    <tr>
+                        <th>Class:</th>
+                        <td><span class="badge bg-secondary">{{ session[3] }}</span></td>
+                    </tr>
+                    <tr>
+                        <th>Subject:</th>
+                        <td>{{ session[4] }}</td>
+                    </tr>
+                    <tr>
+                        <th>Start Time:</th>
+                        <td>{{ session[5] }}</td>
+                    </tr>
+                    <tr>
+                        <th>End Time:</th>
+                        <td>{{ session[6] if session[6] else 'In Progress' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Status:</th>
+                        <td>
+                            {% if session[7] == 'active' %}
+                            <span class="badge bg-warning">Active</span>
+                            {% else %}
+                            <span class="badge bg-success">Completed</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-bar"></i> Verification Status
+                </h5>
+            </div>
+            <div class="card-body text-center">
+                {% if camera_log %}
+                <div class="mb-3">
+                    <h3 class="text-primary">{{ camera_log[2] }}</h3>
+                    <p class="text-muted mb-0">Camera Detected</p>
+                </div>
+                <div class="mb-3">
+                    <h3 class="text-info">{{ camera_log[3] }}</h3>
+                    <p class="text-muted mb-0">Card Scans</p>
+                </div>
+                <div class="mb-3">
+                    {% if discrepancy == 0 %}
+                    <span class="badge bg-success fs-6">
+                        <i class="fas fa-check"></i> Verified
+                    </span>
+                    {% else %}
+                    <span class="badge bg-warning fs-6">
+                        <i class="fas fa-exclamation-triangle"></i> {{ discrepancy }} Discrepancy
+                    </span>
+                    {% endif %}
+                </div>
+                {% else %}
+                <p class="text-muted">No verification data available</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-users"></i> Attendance Records ({{ total_present }} Present)
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if attendance %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Student Name</th>
+                                <th>Student ID</th>
+                                <th>Class</th>
+                                <th>Card Scan Time</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in attendance %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ record[7] }}</td>
+                                <td><code>{{ record[2] }}</code></td>
+                                <td><span class="badge bg-secondary">{{ record[8] }}</span></td>
+                                <td>{{ record[3] }}</td>
+                                <td><span class="badge bg-success">Present</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-user-times fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">No attendance records found for this session.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

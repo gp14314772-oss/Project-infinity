@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automated Attendance & Monitoring System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Automated Attendance & Monitoring System</h1>
+            <p class="header__subtitle">Anti-Proxy Attendance Management</p>
+        </header>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="dashboard">
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card__icon">👨‍🏫</div>
+                    <div class="stat-card__content">
+                        <h3 id="total-teachers">3</h3>
+                        <p>Total Teachers</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card__icon">👨‍🎓</div>
+                    <div class="stat-card__content">
+                        <h3 id="total-students">8</h3>
+                        <p>Total Students</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card__icon">📊</div>
+                    <div class="stat-card__content">
+                        <h3 id="total-sessions">2</h3>
+                        <p>Total Sessions</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card__icon">⚡</div>
+                    <div class="stat-card__content">
+                        <h3 id="active-status">Inactive</h3>
+                        <p>Current Status</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Section -->
+            <div class="actions">
+                <button id="start-session-btn" class="btn btn--primary btn--lg">
+                    🚀 Start New Session
+                </button>
+                <div id="session-status" class="session-status hidden">
+                    <div class="status status--info">
+                        <span>Session in progress...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Sessions -->
+            <div class="card">
+                <div class="card__header">
+                    <h3>Recent Sessions</h3>
+                </div>
+                <div class="card__body">
+                    <div class="table-container">
+                        <table id="recent-sessions-table" class="sessions-table">
+                            <thead>
+                                <tr>
+                                    <th>Session ID</th>
+                                    <th>Teacher</th>
+                                    <th>Class</th>
+                                    <th>Subject</th>
+                                    <th>Attendance</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sessions-tbody">
+                                <!-- Sessions will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Session Workflow Modal -->
+        <div id="session-modal" class="modal hidden">
+            <div class="modal__overlay" id="modal-overlay"></div>
+            <div class="modal__content">
+                <div class="modal__header">
+                    <h2>Session Workflow</h2>
+                    <button id="close-modal" class="modal__close">&times;</button>
+                </div>
+                <div class="modal__body">
+                    <!-- Step 1: Teacher Authentication -->
+                    <div id="step-1" class="workflow-step active">
+                        <h3>Step 1: Teacher Authentication</h3>
+                        <div class="auth-section">
+                            <div class="teacher-selection">
+                                <label class="form-label">Select Teacher:</label>
+                                <select id="teacher-select" class="form-control">
+                                    <option value="">Choose a teacher...</option>
+                                </select>
+                            </div>
+                            <div class="fingerprint-auth">
+                                <div class="fingerprint-icon">👆</div>
+                                <p>Place finger on scanner...</p>
+                                <div id="auth-loading" class="loading hidden">
+                                    <div class="spinner"></div>
+                                    <p>Verifying fingerprint...</p>
+                                </div>
+                                <button id="verify-fingerprint" class="btn btn--primary" disabled>
+                                    Verify Fingerprint
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Session Setup -->
+                    <div id="step-2" class="workflow-step hidden">
+                        <h3>Step 2: Session Setup</h3>
+                        <div class="session-setup">
+                            <div class="form-group">
+                                <label class="form-label">Class:</label>
+                                <select id="class-select" class="form-control">
+                                    <option value="10A">10A</option>
+                                    <option value="10B">10B</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Subject:</label>
+                                <input type="text" id="subject-input" class="form-control" placeholder="Enter subject">
+                            </div>
+                            <button id="setup-complete" class="btn btn--primary">
+                                Start Attendance
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Student Attendance -->
+                    <div id="step-3" class="workflow-step hidden">
+                        <h3>Step 3: Student Attendance</h3>
+                        <div class="attendance-section">
+                            <div class="attendance-controls">
+                                <div class="attendance-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-label">Cards Scanned:</span>
+                                        <span id="cards-scanned" class="stat-value">0</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Present Students:</span>
+                                        <span id="present-count" class="stat-value">0</span>
+                                    </div>
+                                </div>
+                                <button id="simulate-card-scan" class="btn btn--secondary">
+                                    📱 Simulate Card Scan
+                                </button>
+                                <button id="verify-camera" class="btn btn--outline">
+                                    📹 Camera Verification
+                                </button>
+                            </div>
+                            <div class="students-list">
+                                <h4>Students Present:</h4>
+                                <div id="present-students" class="student-chips">
+                                    <!-- Student chips will be added here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Camera Verification -->
+                    <div id="step-4" class="workflow-step hidden">
+                        <h3>Step 4: Camera Verification</h3>
+                        <div class="verification-section">
+                            <div class="verification-result">
+                                <div class="verification-item">
+                                    <span class="label">Cards Scanned:</span>
+                                    <span id="final-cards-count" class="value">0</span>
+                                </div>
+                                <div class="verification-item">
+                                    <span class="label">Camera Detected:</span>
+                                    <span id="camera-detected-count" class="value">0</span>
+                                </div>
+                                <div class="verification-item">
+                                    <span class="label">Discrepancy:</span>
+                                    <span id="discrepancy-count" class="value status">0</span>
+                                </div>
+                            </div>
+                            <div class="verification-actions">
+                                <button id="end-session-btn" class="btn btn--primary">
+                                    ✅ End Session
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 5: Session Report -->
+                    <div id="step-5" class="workflow-step hidden">
+                        <h3>Session Complete!</h3>
+                        <div class="session-report">
+                            <div class="report-summary">
+                                <h4>Session Summary</h4>
+                                <div class="report-item">
+                                    <span class="label">Session ID:</span>
+                                    <span id="report-session-id" class="value">-</span>
+                                </div>
+                                <div class="report-item">
+                                    <span class="label">Teacher:</span>
+                                    <span id="report-teacher" class="value">-</span>
+                                </div>
+                                <div class="report-item">
+                                    <span class="label">Class:</span>
+                                    <span id="report-class" class="value">-</span>
+                                </div>
+                                <div class="report-item">
+                                    <span class="label">Subject:</span>
+                                    <span id="report-subject" class="value">-</span>
+                                </div>
+                                <div class="report-item">
+                                    <span class="label">Duration:</span>
+                                    <span id="report-duration" class="value">-</span>
+                                </div>
+                                <div class="report-item">
+                                    <span class="label">Total Present:</span>
+                                    <span id="report-attendance" class="value">-</span>
+                                </div>
+                                <div class="report-item">
+                                    <span class="label">Verification Status:</span>
+                                    <span id="report-verification" class="status">-</span>
+                                </div>
+                            </div>
+                            <button id="finish-session" class="btn btn--primary">
+                                📋 Finish & Return to Dashboard
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+# Automated Attendance & Monitoring System - Requirements
+
+# Core Python packages
+Flask==2.3.3
+opencv-python==4.8.1.78
+numpy==1.24.3
+sqlite3  # Built-in with Python
+
+# For fingerprint scanner integration (when using real hardware)
+# pyfingerprint==1.5
+
+# For additional functionality
+requests==2.31.0
+Pillow==10.0.1
+
+# For YOLO object detection (optional - for advanced person detection)
+# ultralytics==8.0.200
+
+# Development and testing
+pytest==7.4.3
+pytest-flask==1.2.0
+
+# For production deployment
+gunicorn==21.2.0
